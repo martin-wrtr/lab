@@ -7,10 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<meta name="description" content="A concept for a micro app that tracks whether AI systems are allowed to read public posts on LinkedIn, Reddit, YouTube, X, Instagram and Facebook, then checks a content calendar against it. It isn't built yet. This page lays out how it would work, part by part, as a room you can turn and walk through.">
+<meta name="description" content="A look under the hood of a concept micro app. On the surface, AI Access Panel is a single web page showing whether AI systems are allowed to read public posts on LinkedIn, Reddit, YouTube, X, Instagram and Facebook. Underneath, it's a process: public sources are read, checked and recorded, then shown on the page and passed on to other systems, such as a content calendar. This diagram lays that process out part by part. The app isn't built yet.">
 <meta property="og:title" content="AI Access Panel">
 <meta name="author" content="Martin Etchegaray">
-<meta property="og:description" content="A concept for a micro app that tracks whether AI systems are allowed to read public posts on LinkedIn, Reddit, YouTube, X, Instagram and Facebook, then checks a content calendar against it. It isn't built yet. This page lays out how it would work, part by part, as a room you can turn and walk through.">
+<meta property="og:description" content="A look under the hood of a concept micro app. On the surface, AI Access Panel is a single web page showing whether AI systems are allowed to read public posts on LinkedIn, Reddit, YouTube, X, Instagram and Facebook. Underneath, it's a process: public sources are read, checked and recorded, then shown on the page and passed on to other systems, such as a content calendar. This diagram lays that process out part by part. The app isn't built yet.">
 <meta property="og:type" content="website">
 <style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:inherit}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <style>
@@ -19,15 +19,16 @@
 :root{
   --ground:#e3e7e1; --stage:#e9ece7; --surface:#f6f8f4; --fg:#18201b; --muted:#536059; --rule:#c4ccc5;
   --hazard:#f2b705; --accent-ink:#8a5f00; --glow:rgba(242,183,5,.75);
-  --go:#2f9e57; --part:#e0a100; --stop:#d2483a; --unk:#7d887f;
+  --go:#3f8f60; --part:#b98419; --stop:#b9483b; --unk:#7d887f;
+  --pv-bg:#ffffff; --pv-ink:#1f2321; --pv-muted:#6b726e; --pv-rule:#e3e6e3; --pv-soft:#f5f6f4; --pv-chrome:#eceeeb;
   --go-bg:#dcefe2; --part-bg:#f8ebc9; --stop-bg:#f6dcd8; --unk-bg:#e6e9e5;
   --f-display:'Barlow Condensed','Arial Narrow',sans-serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
   /* object materials: the objects keep their own paint in both themes */
   --edge:#1f2622; --obj-ink:#1b211d;
   --steel-t:#c9d1cb;--steel-l:#a9b3ac;--steel-r:#8b958e;--paper-t:#f7f5ee;--paper-l:#dedbd0;--paper-r:#c8c4b7;
-  --cobalt-t:#3f63a8;--cobalt-l:#2f4d86;--cobalt-r:#253d6b;--olive-t:#8e9a6a;--olive-l:#727d52;--olive-r:#5d6643;
+  --cobalt-t:#6d7f99;--cobalt-l:#566880;--cobalt-r:#455468;--olive-t:#9aa38b;--olive-l:#808a70;--olive-r:#6a735c;--frame-t:#d9dcd8;--frame-l:#c4c8c3;--frame-r:#a7aca6;
   --wood-t:#c49a6c;--wood-l:#a77e52;--wood-r:#8a6640;--slate-t:#4a524d;--slate-l:#363c38;--slate-r:#2a2f2c;
-  --amber-t:#f2b705;--amber-l:#cf9a00;--amber-r:#a87d00;--sage-t:#b9c5b2;--sage-l:#aab7a3;--sage-r:#8d9a87;
+  --amber-t:#d9b45a;--amber-l:#bf9a42;--amber-r:#9c7d33;--sage-t:#b9c5b2;--sage-l:#aab7a3;--sage-r:#8d9a87;
   --plum-t:#3a2d48;--plum-l:#2a1f33;--plum-r:#1f1726;--kraft-t:#d9bf8f;--kraft-l:#c2a674;--kraft-r:#a68b5d;
   --base-t:#d3dad3;--base-l:#b7c0b8;--base-r:#9fa9a1;--zone-t:#c6cfc7;--zone-edge:#8d998f;--zone-ink:#5b675e;--tb-t:#dbe1db;--tb-s:#aeb8b0;
   --pipe:#9fb0a3;--tag-bg:#f6f8f4;--tag-line:#6f7b72;--tag-fg:#18201b;
@@ -35,14 +36,14 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --ground:#121613;--stage:#171c18;--surface:#1c221e;--fg:#e4e9e3;--muted:#9aa69e;--rule:#2f3832;
   --accent-ink:#f2b705;--glow:rgba(242,183,5,.6);
-  --go:#57dd87;--part:#ffc53d;--stop:#f0705f;--unk:#8d988f;
+  --go:#6cc58d;--part:#e3b14b;--stop:#e2786a;--unk:#8d988f;--pv-bg:#1b1e1c;--pv-ink:#e6e9e6;--pv-muted:#9aa29d;--pv-rule:#2e3330;--pv-soft:#222624;--pv-chrome:#262a28;
   --go-bg:#1d3326;--part-bg:#3a3018;--stop-bg:#3d201c;--unk-bg:#232a25;
   --base-t:#2a322c;--base-l:#1f2521;--base-r:#171c19;--zone-t:#313a33;--zone-edge:#4f5c53;--zone-ink:#8d998f;--tb-t:#273029;--tb-s:#1a201c;
   --pipe:#6f8174;--tag-bg:#1c221e;--tag-line:#7d887f;--tag-fg:#e4e9e3;color-scheme:dark}}
 :root[data-theme="dark"]{
   --ground:#121613;--stage:#171c18;--surface:#1c221e;--fg:#e4e9e3;--muted:#9aa69e;--rule:#2f3832;
   --accent-ink:#f2b705;--glow:rgba(242,183,5,.6);
-  --go:#57dd87;--part:#ffc53d;--stop:#f0705f;--unk:#8d988f;
+  --go:#6cc58d;--part:#e3b14b;--stop:#e2786a;--unk:#8d988f;--pv-bg:#1b1e1c;--pv-ink:#e6e9e6;--pv-muted:#9aa29d;--pv-rule:#2e3330;--pv-soft:#222624;--pv-chrome:#262a28;
   --go-bg:#1d3326;--part-bg:#3a3018;--stop-bg:#3d201c;--unk-bg:#232a25;
   --base-t:#2a322c;--base-l:#1f2521;--base-r:#171c19;--zone-t:#313a33;--zone-edge:#4f5c53;--zone-ink:#8d998f;--tb-t:#273029;--tb-s:#1a201c;
   --pipe:#6f8174;--tag-bg:#1c221e;--tag-line:#7d887f;--tag-fg:#e4e9e3;color-scheme:dark}
@@ -124,12 +125,62 @@ ul.why{margin:4px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:3
 .slider input{flex:1;min-width:80px;accent-color:var(--accent-ink);height:28px}
 .slider output{font-family:var(--f-mono);font-size:12.5px;letter-spacing:0;width:44px;text-align:right;font-variant-numeric:tabular-nums}
 .slider input:focus-visible{outline:3px solid var(--hazard);outline-offset:2px}
+.trace .count{display:flex;flex-direction:column;gap:6px}
+.trsel .tb{font-size:12px;min-height:30px;padding:0 8px}
+.datanote{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center}
+.lg{display:inline-flex;gap:6px;align-items:center}
+.lgSolid,.lgDash{display:inline-block;width:26px;height:0;border-top:3px solid var(--pipe);box-shadow:0 0 0 1px var(--edge)}
+.lgDash{border-top-style:dashed;box-shadow:none}
+.stage.pageMode .hint,.stage.pageMode .zoom,.stage.pageMode .tb.sym,.stage.pageMode #zFit,.stage.pageMode #tLabels,.stage.pageMode #tFlow{display:none}
+.pageView{position:absolute;inset:0;overflow:auto;padding:56px 16px 16px;box-sizing:border-box;background:var(--stage)}
+.pvWin{max-width:860px;margin:0 auto;background:var(--pv-bg);border:1px solid var(--pv-rule);border-radius:8px;overflow:hidden;color:var(--pv-ink);font-family:var(--f-body)}
+.pvChrome{display:flex;gap:6px;align-items:center;padding:8px 12px;background:var(--pv-chrome);border-bottom:1px solid var(--pv-rule)}
+.pvChrome>span{width:9px;height:9px;border-radius:50%;background:var(--pv-rule)}
+.pvUrl{margin-left:10px;flex:1;max-width:320px;font:12px var(--f-mono);color:var(--pv-muted);background:var(--pv-bg);border:1px solid var(--pv-rule);border-radius:12px;padding:3px 10px}
+.pvBody{padding:24px 24px 28px;display:flex;flex-direction:column;gap:24px}
+.pvHead h3{font-family:var(--f-body);font-size:24px;font-weight:600;letter-spacing:0;text-transform:none;margin:0}
+.pvHead p{margin:4px 0 0;font-size:15px}
+.pvMeta{font-size:13px!important}
+.pvMuted{color:var(--pv-muted)}
+.pvSmall{font-size:13px;margin:8px 0 0}
+.pvGrid{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:20px;align-items:start}
+.pvSec{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pvSec h4{margin:0;font-size:15px;font-weight:600}
+.pvTableWrap{overflow-x:auto}
+.pvTable{border-collapse:collapse;width:100%;min-width:480px;font-size:14px}
+.pvTable th,.pvTable td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--pv-rule);white-space:nowrap}
+.pvTable thead th{font-size:12px;font-weight:500;color:var(--pv-muted)}
+.pvTable tr.on{background:var(--pv-soft)}
+.pvRow{appearance:none;border:0;background:none;color:inherit;font:600 14px var(--f-body);padding:0;cursor:pointer;text-decoration:underline;text-decoration-color:var(--pv-rule);text-underline-offset:3px}
+.pvRow:focus-visible,.pvFrom button:focus-visible{outline:2px solid var(--hazard);outline-offset:2px}
+.pvDots{display:inline-flex;gap:3px;vertical-align:middle;margin-right:8px}
+.pvDot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.pv-g{background:var(--go)}.pv-a{background:var(--part)}.pv-r{background:var(--stop)}.pv-u{border:1px solid var(--unk);box-sizing:border-box}
+.pvNum{font:12.5px var(--f-mono);color:var(--pv-muted);font-variant-numeric:tabular-nums}
+.pvChanged{font-size:12px;border:1px solid var(--pv-ink);border-radius:10px;padding:1px 7px}
+.pvEv{background:var(--pv-soft);border:1px solid var(--pv-rule);border-radius:6px;padding:12px}
+.pvList{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:5px;font-size:13px}
+.pvList li{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:6px;align-items:center}
+.pvKv{margin:8px 0 0;display:flex;flex-direction:column;gap:4px;font-size:12.5px}
+.pvKv div{display:flex;gap:8px}.pvKv dt{color:var(--pv-muted);width:60px}.pvKv dd{margin:0}
+.mono{font-family:var(--f-mono)}
+.pvEmpty{margin:4px 0 0;font-size:14px;color:var(--pv-muted);border:1px dashed var(--pv-rule);border-radius:6px;padding:10px 12px}
+.pvFoot{border-top:1px solid var(--pv-rule);padding-top:14px}
+.pvFoot p{margin:0;font-size:14px}
+.pvFoot code{font-family:var(--f-mono);font-size:13px;background:var(--pv-soft);padding:1px 5px;border-radius:3px}
+.pvFrom{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin-top:8px;padding-top:8px;border-top:1px dashed var(--pv-rule)}
+.pvFrom>span{font:11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+.pvFrom button{appearance:none;border:1px solid var(--pv-rule);background:transparent;color:var(--pv-ink);font:500 12px/1.2 var(--f-body);padding:4px 8px;border-radius:12px;cursor:pointer;min-height:28px}
+.pvFrom button:hover{border-color:var(--pv-muted)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:700px){.pvGrid{grid-template-columns:minmax(0,1fr)}.pvBody{padding:16px}}
 .scene polygon{stroke:var(--edge);stroke-width:.9;stroke-linejoin:round}
 .scene text{font-family:var(--f-display);font-weight:600;letter-spacing:.06em}
 .scene text.mono{font-family:var(--f-mono);font-weight:500;letter-spacing:0}
 .scene text.b{font-weight:700}
 .m-steel .ft{fill:var(--steel-t)}.m-steel .fl{fill:var(--steel-l)}.m-steel .fr{fill:var(--steel-r)}
 .m-paper .ft{fill:var(--paper-t)}.m-paper .fl{fill:var(--paper-l)}.m-paper .fr{fill:var(--paper-r)}
+.m-frame .ft{fill:var(--frame-t)}.m-frame .fl{fill:var(--frame-l)}.m-frame .fr{fill:var(--frame-r)}
 .m-cobalt .ft{fill:var(--cobalt-t)}.m-cobalt .fl{fill:var(--cobalt-l)}.m-cobalt .fr{fill:var(--cobalt-r)}
 .m-olive .ft{fill:var(--olive-t)}.m-olive .fl{fill:var(--olive-l)}.m-olive .fr{fill:var(--olive-r)}
 .m-wood .ft{fill:var(--wood-t)}.m-wood .fl{fill:var(--wood-l)}.m-wood .fr{fill:var(--wood-r)}
@@ -180,6 +231,16 @@ ul.why{margin:4px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:3
 .tbText{fill:var(--zone-ink);letter-spacing:.14em!important}
 .vent{fill:none;stroke:var(--edge);stroke-width:.8;opacity:.6}
 
+.bandLabel{fill:var(--zone-ink);font-weight:700!important;letter-spacing:.3em!important;opacity:.8}
+.pipeDash{stroke-dasharray:5 4}
+.reqBtn{fill:#e9e9e2;stroke:var(--edge);stroke-width:.8}
+.pgBg{fill:#fbfbf9;stroke:#cfd3cf;stroke-width:.4}.pgChrome{fill:#eceeeb}.pgDotC{fill:#c4c9c5}.pgUrl{fill:#ffffff;stroke:#d6dad6;stroke-width:.3}
+.pgInk{fill:#25292a}.pgMuted{fill:#7b827e}.pgRule{stroke:#d9ddd9;stroke-width:.4}.pgRuleL{stroke:#eceeeb;stroke-width:.3}
+.pgCard{fill:#f4f5f3;stroke:#dfe2df;stroke-width:.35}.pgChanged{fill:#25292a}
+.dot{stroke:none}.dot.l-unk{fill:none;stroke:#9aa396;stroke-width:.5;stroke-dasharray:none}
+.barM{fill:#9aa39c}.bubble{fill:#eceeeb;stroke:var(--edge);stroke-width:.4}
+.card{fill:#eceeeb;stroke:var(--edge);stroke-width:.35}
+
 </style>
 </head>
 <body>
@@ -187,28 +248,30 @@ ul.why{margin:4px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:3
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Room plan · concept</div>
+    <div class="eyebrow">Under the hood · concept</div>
     <h1>AI Access Panel</h1>
-    <p class="lede">A concept for a micro app that tracks whether AI systems are allowed to read public posts on LinkedIn, Reddit, YouTube, X, Instagram and Facebook, then checks a content calendar against it. It isn't built yet. This page lays out how it would work, part by part, as a room you can turn and walk through.</p>
+    <p class="lede">A look under the hood of a concept micro app. On the surface, AI Access Panel is a single web page showing whether AI systems are allowed to read public posts on LinkedIn, Reddit, YouTube, X, Instagram and Facebook. Underneath, it's a process: public sources are read, checked and recorded, then shown on the page and passed on to other systems, such as a content calendar. This diagram lays that process out part by part. The app isn't built yet.</p>
     <p class="byline">A concept by <a href="https://martinetchegaray.com">Martin Etchegaray</a></p>
   </header>
 
-  <section class="bench" aria-label="Isometric teardown">
+  <section class="bench" aria-label="Process diagram">
     <div class="stagecol">
-      <div class="stage" id="stage" tabindex="0" aria-label="Isometric scene. Use plus and minus to zoom, arrow keys to move, square brackets to turn, or pick a part from the list.">
-        <svg id="scene" class="scene" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Isometric teardown of the AI access panel: sources, checks, records, the panel, and the calendar plug" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="stage" id="stage" tabindex="0" aria-label="Process diagram. Use plus and minus to zoom, arrow keys to move, square brackets to turn, or pick a part from the list.">
+        <svg id="scene" class="scene" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Process diagram of the AI Access Panel: sources, checks, records, the web page, and the systems it passes data on to" preserveAspectRatio="xMidYMid meet"></svg>
         <div class="zoom" id="zoomRead">100%</div>
         <div class="tools">
+          <div class="seg" role="group" aria-label="What to show"><button class="tb" id="vProcess" type="button" aria-pressed="true">Process</button><button class="tb" id="vPage" type="button" aria-pressed="false">Web page</button></div>
           <button class="tb sym" id="zOut" type="button" aria-label="Zoom out">−</button>
           <button class="tb sym" id="zIn" type="button" aria-label="Zoom in">+</button>
           <button class="tb" id="zFit" type="button">Fit</button>
           <button class="tb" id="tLabels" type="button" aria-pressed="true">Labels</button>
           <button class="tb" id="tFlow" type="button" aria-pressed="true">Flow</button>
         </div>
+        <div class="pageView" id="pageView" hidden></div>
         <div class="hint" id="hintText">Drag to turn and tilt · scroll or pinch to zoom · click a part</div>
       </div>
       <div class="camrow" role="group" aria-label="View controls">
-        <div class="seg" role="group" aria-label="Dragging the room">
+        <div class="seg" role="group" aria-label="What dragging does">
           <button class="tb" id="modeRotate" type="button" aria-pressed="true">Rotate</button>
           <button class="tb" id="modeMove" type="button" aria-pressed="false">Move</button>
         </div>
@@ -217,14 +280,14 @@ ul.why{margin:4px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:3
         <button class="tb" id="resetView" type="button">Reset view</button>
       </div>
       <div class="trace" id="trace">
-        <div class="count">Trace one light<b id="stepNum">0 / 9</b></div>
-        <p id="stepText">Follow LinkedIn's GPTBot light from its robots.txt file to the calendar report, one step at a time.</p>
+        <div class="count">Trace<div class="seg trsel" role="group" aria-label="Which trace"><button class="tb" id="trS" type="button" aria-pressed="true">Scheduled check</button><button class="tb" id="trA" type="button" aria-pressed="false">Agent asks</button></div><b id="stepNum">0 / 10</b></div>
+        <p id="stepText">Follow LinkedIn's GPTBot status through a weekly check run, onto the page, and out to other systems.</p>
         <div class="ctl">
           <button class="btn ghost" id="stepPrev" type="button" disabled>Back</button>
           <button class="btn" id="stepNext" type="button">Start</button>
         </div>
       </div>
-      <p class="datanote"><b>Note:</b> the lamp states shown are sample data, not live checks.</p>
+      <p class="datanote"><b>Note:</b> statuses shown are sample data, not live checks. <span class="lg"><span class="lgSolid" aria-hidden="true"></span>moves during a check run</span> <span class="lg"><span class="lgDash" aria-hidden="true"></span>read when asked</span></p>
     </div>
     <aside class="inspector">
       <div class="card" id="info" aria-live="polite"></div>
@@ -238,7 +301,7 @@ ul.why{margin:4px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:3
 </div>
 
 <script>
-/* AI access panel room: a rotatable orthographic drawing.
+/* AI Access Panel, under the hood: a rotatable orthographic process diagram.
    World: x and y on the floor, z up. The camera turns around z (az) and looks down at an angle (el).
    buildScene() returns an SVG string for the current camera, so it can run in Node for checks. */
 
@@ -260,7 +323,7 @@ function pts(arr) { return arr.map(function (p) { var q = P(p[0], p[1], p[2]); r
 function escX(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function plane(o, U, V) { var a = P(U[0], U[1], U[2]), c = P(V[0], V[1], V[2]), q = P(o[0], o[1], o[2]); return 'matrix(' + [a[0], a[1], c[0], c[1], q[0], q[1]].map(function (n) { return Math.round(n * 1000) / 1000; }).join(' ') + ')'; }
 
-/* light falls from a fixed direction in the room, so faces darken as the room turns */
+/* light falls from a fixed direction, so faces darken as the diagram turns */
 var LIGHT = [0.35, 0.94];
 function tone(nx, ny) { var d = nx * LIGHT[0] + ny * LIGHT[1]; return d > 0.5 ? 'fl' : 'fr'; }
 
@@ -297,29 +360,38 @@ var LATEST = { li: 'grggrgrr', rd: 'ggggagar', yt: 'gaggrgrg', x: 'ararrrrr', ig
 var WALL = { li: 'a', rd: 'g', yt: 'g', x: 'a', ig: 'r', fb: 'a' };
 function lampClass(v) { return v === 'g' ? 'l-go' : v === 'a' ? 'l-part' : v === 'r' ? 'l-stop' : 'l-unk'; }
 
-/* ---------------- room layout ---------------- */
+/* ---------------- layout ---------------- */
+var FLOOR = { w: 980, d: 560 };
 var ZONES = [
   { id: 'z-sources', label: 'SOURCES', x: 20, y: 20, w: 210, d: 280 },
   { id: 'z-checks', label: 'CHECKS', x: 270, y: 20, w: 200, d: 280, u: 4 },
   { id: 'z-records', label: 'RECORDS', x: 510, y: 20, w: 130, d: 280, u: 70 },
-  { id: 'z-panel', label: 'PANEL', x: 680, y: 20, w: 280, d: 280, u: 128 },
-  { id: 'z-down', label: 'DOWNSTREAM: CALENDAR PLUG', x: 420, y: 330, w: 540, d: 130 }
+  { id: 'z-page', label: 'THE PAGE', x: 680, y: 20, w: 280, d: 280, u: 40 },
+  { id: 'z-out', label: 'PASSED ON: OTHER SYSTEMS', x: 420, y: 330, w: 540, d: 210 }
 ];
+/* band labels engraved along the floor edge, grouping the zones */
+var BANDS = [
+  { label: 'UNDER THE HOOD', x: 22, y: 4 },
+  { label: 'ON THE PAGE', x: 682, y: 4 }
+];
+/* kind: 'run' = moves during a check run (scheduled or requested); 'demand' = read when someone or something asks */
 var PIPES = [
-  { id: 'p-src', pts: [[230, 160, 5], [270, 160, 5]] },
-  { id: 'p-chk', pts: [[470, 160, 5], [510, 160, 5]] },
-  { id: 'p-rec', pts: [[640, 100, 5], [700, 100, 5], [700, 118, 5]] },
-  { id: 'p-hist', pts: [[575, 282, 5], [575, 318, 5], [648, 318, 5], [648, 382, 5], [660, 382, 5]] },
-  { id: 'p-panel', pts: [[706, 152, 5], [706, 362, 5], [696, 362, 5], [696, 370, 5]] },
-  { id: 'p-cal', pts: [[600, 400, 5], [660, 400, 5]] },
-  { id: 'p-rep', pts: [[720, 398, 5], [780, 398, 5]] }
+  { id: 'p-src', kind: 'run', pts: [[230, 160, 5], [270, 160, 5]] },
+  { id: 'p-chk', kind: 'run', pts: [[470, 160, 5], [510, 160, 5]] },
+  { id: 'p-rec', kind: 'demand', pts: [[614, 100, 5], [672, 100, 5], [672, 160, 5], [700, 160, 5]] },
+  { id: 'p-hist', kind: 'demand', pts: [[575, 282, 5], [575, 318, 5], [648, 318, 5], [648, 382, 5], [660, 382, 5]] },
+  { id: 'p-cal', kind: 'demand', pts: [[600, 400, 5], [660, 400, 5]] },
+  { id: 'p-rep', kind: 'demand', pts: [[720, 398, 5], [780, 398, 5]] },
+  { id: 'p-api', kind: 'demand', pts: [[614, 70, 5], [630, 70, 5], [630, 500, 5], [660, 500, 5]] },
+  { id: 'p-cons', kind: 'demand', pts: [[740, 500, 5], [790, 500, 5]] },
+  { id: 'p-req', kind: 'demand', pts: [[680, 526, 5], [680, 546, 5], [250, 546, 5], [250, 64, 5], [290, 64, 5]] }
 ];
 
 var PARTS = [];
 function part(def) { PARTS.push(def); }
 
 /* --- Sources --- */
-part({ id: 'robots', layer: 'Sources', name: 'robots.txt files', bbox: [34, 30, 0, 190, 26, 50], draw: function () {
+part({ id: 'robots', layer: 'Sources', name: 'Platform robots.txt files', bbox: [34, 30, 0, 190, 26, 50], draw: function () {
   box(34, 34, 0, 188, 20, 5, 'steel');
   PLATFORMS.forEach(function (p, i) {
     var x = 42 + i * 30, r = '';
@@ -328,15 +400,15 @@ part({ id: 'robots', layer: 'Sources', name: 'robots.txt files', bbox: [34, 30, 
     deco(onFront(x, 42, 49, t(11, 9, p.code, 7, 'ink b', 'middle') + r));
   });
 } });
-part({ id: 'botdocs', layer: 'Sources', name: 'AI bot documentation', bbox: [40, 100, 0, 66, 66, 34], draw: function () {
+part({ id: 'botdocs', layer: 'Sources', name: "AI companies' bot lists", bbox: [40, 100, 0, 66, 66, 34], draw: function () {
   for (var k = 0; k < 4; k++) { box(40 + k * 1.5, 104 - k * 1.5, k * 7, 60, 56, 7, k === 3 ? 'cobalt' : 'paper'); }
-  deco(onTop(46, 100, 28.05, t(4, 14, 'BOT DOCS', 9, 'onblue b') + '<rect x="4" y="20" width="40" height="1.6" class="ruleL"/><rect x="4" y="25" width="30" height="1.6" class="ruleL"/><rect x="4" y="30" width="36" height="1.6" class="ruleL"/>'));
+  deco(onTop(46, 100, 28.05, t(4, 14, 'BOT LISTS', 9, 'onblue b') + '<rect x="4" y="20" width="40" height="1.6" class="ruleL"/><rect x="4" y="25" width="30" height="1.6" class="ruleL"/><rect x="4" y="30" width="36" height="1.6" class="ruleL"/>'));
 } });
-part({ id: 'policies', layer: 'Sources', name: "Owners' AI policies", bbox: [130, 100, 0, 76, 66, 34], draw: function () {
+part({ id: 'policies', layer: 'Sources', name: "Platform owners' AI policies", bbox: [130, 100, 0, 76, 66, 34], draw: function () {
   for (var k = 0; k < 4; k++) { box(134 + k * 1.5, 104 - k * 1.5, k * 7, 66, 56, 7, k === 3 ? 'olive' : 'paper'); }
-  deco(onTop(140, 100, 28.05, t(4, 14, 'POLICIES', 9, 'onblue b') + '<rect x="4" y="20" width="44" height="1.6" class="ruleL"/><rect x="4" y="25" width="34" height="1.6" class="ruleL"/><rect x="4" y="30" width="40" height="1.6" class="ruleL"/>'));
+  deco(onTop(140, 100, 28.05, t(4, 14, 'AI POLICIES', 9, 'onblue b') + '<rect x="4" y="20" width="44" height="1.6" class="ruleL"/><rect x="4" y="25" width="34" height="1.6" class="ruleL"/><rect x="4" y="30" width="40" height="1.6" class="ruleL"/>'));
 } });
-part({ id: 'dealsrc', layer: 'Sources', name: 'Deal announcements', bbox: [36, 200, 0, 82, 86, 12], draw: function () {
+part({ id: 'dealsrc', layer: 'Sources', name: 'Licensing deal announcements', bbox: [36, 200, 0, 82, 86, 12], draw: function () {
   box(38, 204, 0, 76, 82, 4, 'wood');
   box(46, 214, 4, 60, 66, 1, 'paper');
   var r = t(4, 16, 'PRESS RELEASE', 7, 'ink b');
@@ -344,7 +416,7 @@ part({ id: 'dealsrc', layer: 'Sources', name: 'Deal announcements', bbox: [36, 2
   deco(onTop(46, 214, 5.05, r));
   box(62, 206, 4, 28, 10, 6, 'steel');
 } });
-part({ id: 'browser', layer: 'Sources', name: 'Logged-out browser', bbox: [136, 216, 0, 88, 34, 78], draw: function () {
+part({ id: 'browser', layer: 'Sources', name: 'Browser with no account', bbox: [136, 216, 0, 88, 34, 78], draw: function () {
   box(160, 226, 0, 36, 22, 4, 'slate');
   box(174, 232, 4, 8, 6, 18, 'slate');
   box(138, 230, 20, 84, 8, 58, 'slate');
@@ -353,28 +425,28 @@ part({ id: 'browser', layer: 'Sources', name: 'Logged-out browser', bbox: [136, 
 } });
 
 /* --- Checks --- */
-part({ id: 'scheduler', layer: 'Checks', name: 'Scheduler', bbox: [288, 36, 0, 56, 56, 46], draw: function () {
+part({ id: 'trigger', layer: 'Checks', name: 'Check trigger', bbox: [288, 36, 0, 56, 56, 46], draw: function () {
   box(290, 40, 0, 52, 50, 42, 'steel');
-  var r = '<circle cx="26" cy="20" r="14" class="dial"/>';
-  for (var k = 0; k < 12; k++) { var a = k * Math.PI / 6; r += '<line x1="' + f1(26 + Math.cos(a) * 11) + '" y1="' + f1(20 + Math.sin(a) * 11) + '" x2="' + f1(26 + Math.cos(a) * 13) + '" y2="' + f1(20 + Math.sin(a) * 13) + '" class="tick"/>'; }
-  r += '<line x1="26" y1="20" x2="26" y2="10" class="hand"/><line x1="26" y1="20" x2="33" y2="20" class="hand"/>' + t(26, 39, 'WEEKLY', 5.5, 'ink b', 'middle');
+  var r = '<circle cx="18" cy="18" r="11" class="dial"/>';
+  for (var k = 0; k < 12; k++) { var a = k * Math.PI / 6; r += '<line x1="' + f1(18 + Math.cos(a) * 8.5) + '" y1="' + f1(18 + Math.sin(a) * 8.5) + '" x2="' + f1(18 + Math.cos(a) * 10) + '" y2="' + f1(18 + Math.sin(a) * 10) + '" class="tick"/>'; }
+  r += '<line x1="18" y1="18" x2="18" y2="10" class="hand"/><line x1="18" y1="18" x2="24" y2="18" class="hand"/>' + t(18, 37, 'WEEKLY', 4.6, 'ink b', 'middle') +
+    '<rect x="33" y="10" width="14" height="14" rx="2" class="reqBtn"/>' + t(40, 37, 'REQUEST', 4.6, 'ink b', 'middle');
   deco(onFront(290, 90, 42, r));
-  deco(onTop(290, 40, 42.05, '<rect x="18" y="20" width="16" height="8" rx="2" class="btnRed"/>'));
 } });
-part({ id: 'reader', layer: 'Checks', name: 'Robots.txt reader', bbox: [366, 36, 0, 98, 78, 60], draw: function () {
+part({ id: 'reader', layer: 'Checks', name: 'robots.txt checker', bbox: [366, 36, 0, 98, 78, 60], draw: function () {
   box(370, 40, 0, 90, 70, 48, 'steel');
   deco(onFront(370, 110, 48, '<rect x="8" y="8" width="56" height="22" rx="1.5" class="screen"/>' + t(12, 16, 'User-agent: GPTBot', 4.6, 'scrInk mono') + t(12, 22, 'Disallow: /', 4.6, 'scrStop mono') + t(12, 28, 'MATCH LINE KEPT', 4.2, 'scrInk mono') +
-    '<circle cx="76" cy="14" r="4" class="ledGo"/><circle cx="76" cy="25" r="4" class="ledOff"/>' + t(45, 41, 'ROBOTS.TXT READER', 5.5, 'ink b', 'middle')));
+    '<circle cx="76" cy="14" r="4" class="ledGo"/><circle cx="76" cy="25" r="4" class="ledOff"/>' + t(45, 41, 'ROBOTS.TXT CHECKER', 5.5, 'ink b', 'middle')));
   box(392, 52, 48, 40, 22, 8, 'slate');
   deco(onTop(392, 52, 56.05, '<rect x="6" y="9" width="28" height="4" rx="1" class="slot"/>'));
 } });
-part({ id: 'wallcheck', layer: 'Checks', name: 'Logged-out check', bbox: [286, 146, 0, 98, 78, 56], draw: function () {
+part({ id: 'wallcheck', layer: 'Checks', name: 'Login-wall checker', bbox: [286, 146, 0, 98, 78, 56], draw: function () {
   box(290, 150, 0, 88, 70, 44, 'steel');
   deco(onFront(290, 220, 44, '<circle cx="22" cy="18" r="11" class="lensO"/><circle cx="22" cy="18" r="6.5" class="lensI"/><circle cx="20" cy="16" r="2" class="glint"/>' +
-    '<rect x="40" y="9" width="40" height="16" rx="1.5" class="screen"/>' + t(60, 19, 'SCREENSHOT', 4.8, 'scrInk mono', 'middle') + t(44, 38, 'LOGGED-OUT CHECK', 5.5, 'ink b', 'middle')));
+    '<rect x="40" y="9" width="40" height="16" rx="1.5" class="screen"/>' + t(60, 19, 'SCREENSHOT', 4.8, 'scrInk mono', 'middle') + t(44, 38, 'LOGIN-WALL CHECKER', 5.5, 'ink b', 'middle')));
   box(316, 166, 44, 34, 30, 10, 'slate');
 } });
-part({ id: 'desk', layer: 'Checks', name: 'Policy and deals desk', bbox: [396, 146, 0, 70, 90, 56], draw: function () {
+part({ id: 'desk', layer: 'Checks', name: 'Human review desk', bbox: [396, 146, 0, 70, 90, 56], draw: function () {
   [[400, 152], [454, 152], [400, 222], [454, 222]].forEach(function (q) { box(q[0], q[1], 0, 6, 6, 24, 'slate'); });
   box(398, 150, 24, 64, 80, 5, 'wood');
   deco(onFront(398, 230, 29, t(32, 4.4, 'HUMAN REVIEW', 4.2, 'ink b', 'middle')));
@@ -386,13 +458,13 @@ part({ id: 'desk', layer: 'Checks', name: 'Policy and deals desk', bbox: [396, 1
 } });
 part({ id: 'detector', layer: 'Checks', name: 'Change detector', bbox: [296, 240, 0, 164, 50, 44], draw: function () {
   box(300, 242, 0, 156, 44, 36, 'steel');
-  deco(onTop(300, 242, 36.05, '<rect x="16" y="14" width="34" height="5" rx="1" class="slot"/><rect x="104" y="14" width="34" height="5" rx="1" class="slot"/>' + t(33, 32, 'THEN', 7, 'ink b', 'middle') + t(121, 32, 'NOW', 7, 'ink b', 'middle')));
+  deco(onTop(300, 242, 36.05, '<rect x="16" y="14" width="34" height="5" rx="1" class="slot"/><rect x="104" y="14" width="34" height="5" rx="1" class="slot"/>' + t(33, 32, 'BEFORE', 7, 'ink b', 'middle') + t(121, 32, 'NOW', 7, 'ink b', 'middle')));
   deco(onFront(300, 286, 36, '<path d="M58 26 A20 20 0 0 1 98 26" class="arc"/><line x1="78" y1="27" x2="90" y2="12" class="needle"/><circle cx="78" cy="27" r="2.4" class="pivot"/>' +
     '<rect x="112" y="8" width="30" height="12" rx="1.5" class="screen"/>' + t(127, 16.5, '30 DAYS', 4.6, 'scrInk mono', 'middle') + t(14, 18, 'CHANGE', 6, 'ink b') + t(14, 25, 'DETECTOR', 6, 'ink b')));
 } });
 
 /* --- Records --- */
-part({ id: 'records', layer: 'Records', name: 'Records cabinet', bbox: [526, 36, 0, 92, 90, 136], draw: function () {
+part({ id: 'records', layer: 'Records', name: 'Current records', bbox: [526, 36, 0, 92, 90, 136], draw: function () {
   box(530, 40, 0, 84, 78, 132, 'olive');
   var r = '';
   PLATFORMS.forEach(function (p, i) {
@@ -414,57 +486,52 @@ part({ id: 'history', layer: 'Records', name: 'Status history', bbox: [526, 160,
   deco(onTop(560, 210, 91.05, '<rect x="0" y="0" width="30" height="10" class="labelPlate"/>' + t(15, 7.5, dates[4], 5, 'ink b', 'middle')));
 } });
 
-/* --- Panel --- */
-part({ id: 'panel', layer: 'Panel', name: 'Panel cabinet', bbox: [700, 120, 0, 240, 30, 170], draw: function () {
-  box(700, 120, 0, 240, 30, 170, 'sage');
-  deco(onFront(700, 150, 170, '<rect x="4" y="4" width="232" height="30" rx="2" class="plateDark"/>' + t(10, 15, 'B2B SOCIAL PLATFORMS · PANEL 01', 4.4, 'onDark') + t(10, 27, 'AI ACCESS ANNUNCIATOR', 10, 'onDark b') +
-    '<circle cx="5" cy="166" r="1.8" class="screw"/><circle cx="235" cy="166" r="1.8" class="screw"/>'));
-  deco(onRight(940, 150, 170, '<rect x="6" y="40" width="18" height="90" rx="2" class="vent"/>'));
-} });
-part({ id: 'controls', layer: 'Panel', name: 'TEST and ACK buttons', bbox: [880, 150, 140, 54, 2, 30], tagAnchor: [908, 150, 151], draw: function () {
-  ITEMS.push({ depth: 0, svg: '' });
-  deco(onFront(700, 150, 170, '<circle cx="196" cy="19" r="9" class="btnRing"/><circle cx="196" cy="19" r="6.5" class="btnTest"/>' + t(196, 21, 'TEST', 3.8, 'ink b', 'middle') +
-    '<circle cx="221" cy="19" r="9" class="btnRing"/><circle cx="221" cy="19" r="6.5" class="btnAck"/>' + t(221, 21, 'ACK', 3.8, 'ink b', 'middle')));
-} });
-part({ id: 'lampfield', layer: 'Panel', name: 'Lamp field', bbox: [700, 150, 8, 240, 2, 124], tagAnchor: [760, 150, 110], draw: function () {
-  ITEMS.push({ depth: 0, svg: '' });
+/* --- The page: a browser window standing in its zone; its regions are separate parts on the same face --- */
+var PG = { x: 700, y: 140, w: 240, d: 30, h: 170 };
+function pageFace(inner) { return onFront(PG.x, PG.y + PG.d, PG.h, inner); }
+function dotRow(u, v, codes) {
   var s = '';
-  PLATFORMS.forEach(function (p, i) { var u = 58 + i * 29; s += '<rect x="' + u + '" y="40" width="25" height="7" rx="1" class="colPlate"/>' + t(u + 12.5, 45.5, p.code, 4.6, 'ink b', 'middle'); });
-  var rows = [];
-  BOTS.forEach(function (b, bi) { rows.push({ g: 'A', label: b, cells: PLATFORMS.map(function (p) { return LATEST[p.id].charAt(bi); }), shape: 'r' }); });
-  rows.push({ g: 'B', label: 'Public posts', cells: PLATFORMS.map(function (p) { return WALL[p.id]; }), shape: 'r' });
-  rows.push({ g: 'C', label: "Owner's AI", cells: PLATFORMS.map(function () { return 'u'; }), shape: 'pill' });
-  ['ChatGPT-User', 'Claude-User', 'Perplexity-User'].forEach(function (n) { rows.push({ g: 'D', label: n, cells: PLATFORMS.map(function () { return 'u'; }), shape: 'r' }); });
-  var v = 51, prev = null;
-  rows.forEach(function (r) {
-    if (prev && prev !== r.g) { v += 3; }
-    if (prev !== r.g) { s += '<rect x="6" y="' + v + '" width="7" height="6" rx="1" class="plateDark"/>' + t(9.5, v + 4.6, r.g, 4.2, 'onDark b', 'middle'); }
-    s += t(16, v + 4.6, r.label, 3.8, 'ink');
-    r.cells.forEach(function (c, i) {
-      var u = 58 + i * 29;
-      s += r.shape === 'pill' ? '<rect x="' + (u + 3) + '" y="' + v + '" width="19" height="6" rx="3" class="lamp ' + lampClass(c) + '"/>' : '<rect x="' + u + '" y="' + v + '" width="25" height="6" rx="1" class="lamp ' + lampClass(c) + '"/>';
-    });
-    v += 7.4; prev = r.g;
+  for (var i = 0; i < codes.length; i++) { s += '<circle cx="' + (u + i * 4.2) + '" cy="' + v + '" r="1.45" class="dot ' + lampClass(codes.charAt(i)) + '"/>'; }
+  return s;
+}
+part({ id: 'page', layer: 'The page', name: 'The page', bbox: [PG.x, PG.y, 0, PG.w, PG.d, PG.h], draw: function () {
+  box(PG.x + 4, PG.y + 4, 0, PG.w - 8, PG.d - 8, 6, 'slate');
+  box(PG.x, PG.y, 6, PG.w, PG.d, PG.h - 6, 'frame');
+  deco(pageFace('<rect x="4" y="4" width="232" height="158" rx="2" class="pgBg"/><rect x="4" y="4" width="232" height="9" rx="2" class="pgChrome"/>' +
+    '<circle cx="9" cy="8.5" r="1.4" class="pgDotC"/><circle cx="13.5" cy="8.5" r="1.4" class="pgDotC"/><circle cx="18" cy="8.5" r="1.4" class="pgDotC"/>' +
+    '<rect x="26" y="6" width="120" height="5" rx="2.5" class="pgUrl"/>' + t(30, 9.9, 'ai-access-panel', 3.6, 'pgMuted mono') +
+    t(10, 23, 'AI Access Panel', 8, 'pgInk b') + t(10, 29.5, 'Which AI systems may read public posts on six platforms', 3.8, 'pgMuted') +
+    t(230, 23, 'Last check Nov 16 · sample data', 3.4, 'pgMuted', 'end') + '<line x1="10" y1="33" x2="230" y2="33" class="pgRule"/>' +
+    t(10, 157, 'For agents and tools: /api/status.json', 3.6, 'pgMuted mono')));
+} });
+part({ id: 'table', layer: 'The page', name: 'Status table', tagSide: 'left', bbox: [PG.x + 6, PG.y + PG.d, 30, 150, 2, 100], tagAnchor: [PG.x + 60, PG.y + PG.d, 110], draw: function () {
+  ITEMS.push({ depth: 0, svg: '' });
+  var s = t(10, 40, 'PLATFORM', 3.2, 'pgMuted b') + t(42, 40, 'AI CRAWLERS', 3.2, 'pgMuted b') + t(86, 40, 'LOGIN WALL', 3.2, 'pgMuted b') + t(118, 40, "OWNER'S AI", 3.2, 'pgMuted b') + '<line x1="10" y1="42.5" x2="150" y2="42.5" class="pgRule"/>';
+  PLATFORMS.forEach(function (p, i) {
+    var v = 49 + i * 9;
+    var permitted = LATEST[p.id].split('').filter(function (c) { return c === 'g'; }).length;
+    var wall = { g: 'Open', a: 'Partial', r: 'Login required' }[WALL[p.id]];
+    s += t(10, v + 1.3, p.name, 3.8, 'pgInk') + dotRow(43, v, LATEST[p.id]) + t(78, v + 1.3, permitted + '/8', 3.4, 'pgMuted mono') +
+      t(86, v + 1.3, wall, 3.6, 'pgInk') + t(118, v + 1.3, 'Not checked', 3.6, 'pgMuted') + (p.id === 'li' || p.id === 'x' ? '<circle cx="146" cy="' + v + '" r="1.4" class="pgChanged"/>' : '') +
+      '<line x1="10" y1="' + (v + 4.5) + '" x2="150" y2="' + (v + 4.5) + '" class="pgRuleL"/>';
   });
-  deco(onFront(700, 150, 170, s));
+  s += '<circle cx="12" cy="107" r="1.4" class="pgChanged"/>' + t(15, 108.2, 'Changed in the last 30 days', 3.2, 'pgMuted');
+  deco(pageFace(s));
 } });
-part({ id: 'readout', layer: 'Panel', name: 'Readout', bbox: [736, 246, 0, 84, 40, 60], draw: function () {
-  box(752, 260, 0, 40, 18, 18, 'slate');
-  box(740, 250, 18, 76, 30, 40, 'slate');
-  deco(onFront(740, 280, 58, '<rect x="4" y="4" width="68" height="32" rx="1.5" class="screen"/>' + t(8, 11, 'LINKEDIN / GPTBOT', 3.8, 'scrInk mono') + t(8, 17, 'RULE  robots.txt stance', 3.4, 'scrDim mono') +
-    t(8, 22, 'SOURCE  live robots.txt', 3.4, 'scrDim mono') + t(8, 27, 'EVIDENCE  matching line', 3.4, 'scrDim mono') + t(8, 32, 'CHECKED  2026-11-16', 3.4, 'scrDim mono') + t(68, 11, 'BLOCKED', 4.2, 'scrStop mono b', 'end')));
+part({ id: 'evidence', layer: 'The page', name: 'Evidence panel', tagSide: 'right', bbox: [PG.x + 160, PG.y + PG.d, 30, 74, 2, 100], tagAnchor: [PG.x + 196, PG.y + PG.d, 120], draw: function () {
+  ITEMS.push({ depth: 0, svg: '' });
+  deco(pageFace('<rect x="158" y="37" width="74" height="74" rx="1.5" class="pgCard"/>' + t(162, 43, 'LinkedIn · GPTBot', 3.8, 'pgInk b') + '<circle cx="163.5" cy="48" r="1.5" class="dot l-stop"/>' + t(167, 49.2, 'Blocked by robots.txt', 3.4, 'pgInk') +
+    t(162, 57, 'SOURCE', 2.8, 'pgMuted b') + t(162, 61.5, 'linkedin.com/robots.txt', 3.2, 'pgInk mono') + t(162, 69, 'EVIDENCE', 2.8, 'pgMuted b') + t(162, 73.5, 'User-agent: GPTBot', 3.2, 'pgInk mono') + t(162, 77.5, 'Disallow: /', 3.2, 'pgInk mono') +
+    t(162, 85, 'CHECKED', 2.8, 'pgMuted b') + t(162, 89.5, '2026-11-16', 3.2, 'pgInk mono') + t(162, 97, 'CHANGED', 2.8, 'pgMuted b') + t(162, 101.5, 'No change in 30 days', 3.2, 'pgInk')));
 } });
-part({ id: 'dealsboard', layer: 'Panel', name: 'Deals board', bbox: [834, 244, 0, 112, 34, 64], draw: function () {
-  box(838, 248, 0, 104, 26, 60, 'plum');
-  var s = '';
-  for (var k = 0; k < 14; k++) { s += '<circle cx="' + (6 + k * 7.1) + '" cy="4" r="1.6" class="bulb"/><circle cx="' + (6 + k * 7.1) + '" cy="56" r="1.6" class="bulb"/>'; }
-  s += t(52, 15, 'ACTIVE PUBLIC DEALS', 6, 'gold b', 'middle');
-  for (var j = 0; j < 4; j++) { var v = 20 + j * 8.4; s += '<rect x="6" y="' + v + '" width="92" height="6.6" rx="1" class="insert"/><circle cx="10.5" cy="' + (v + 3.3) + '" r="2" class="lamp l-unk"/>' + t(15, v + 4.6, 'PLATFORM × AI FIRM', 3.4, 'onDark b') + t(94, v + 4.6, 'NOT CHECKED', 3.2, 'onDark', 'end'); }
-  deco(onFront(838, 274, 60, s));
+part({ id: 'dealslist', layer: 'The page', name: 'Deals list', tagSide: 'left', bbox: [PG.x + 6, PG.y + PG.d, 14, 150, 2, 36], tagAnchor: [PG.x + 40, PG.y + PG.d, 46], draw: function () {
+  ITEMS.push({ depth: 0, svg: '' });
+  deco(pageFace('<line x1="10" y1="114" x2="230" y2="114" class="pgRule"/>' + t(10, 121, 'Licensing and API deals', 4.2, 'pgInk b') + t(10, 127.5, 'Deals between platforms and AI companies give access that robots.txt does not show.', 3.2, 'pgMuted') +
+    '<rect x="10" y="131" width="140" height="8" rx="1" class="pgCard"/><circle cx="14" cy="135" r="1.5" class="dot l-unk"/>' + t(18, 136.2, 'None logged yet', 3.4, 'pgMuted')));
 } });
 
-/* --- Downstream --- */
-part({ id: 'calendar', layer: 'Downstream', name: 'Content calendar', bbox: [436, 346, 0, 168, 98, 12], draw: function () {
+/* --- Passed on: other systems --- */
+part({ id: 'calendar', layer: 'Passed on', name: 'Content calendar', bbox: [436, 346, 0, 168, 98, 12], draw: function () {
   box(440, 350, 0, 160, 90, 6, 'wood');
   box(446, 356, 6, 148, 78, 1, 'paper');
   var s = t(4, 8, 'CONTENT CALENDAR · NOV 2026', 5, 'ink b');
@@ -472,24 +539,40 @@ part({ id: 'calendar', layer: 'Downstream', name: 'Content calendar', bbox: [436
   ['WK 1', 'WK 2', 'WK 3', 'WK 4'].forEach(function (c, i) {
     var u = 4 + i * 36;
     s += '<rect x="' + u + '" y="12" width="33" height="62" class="calCol"/>' + t(u + 2, 17, c, 3.6, 'ink b');
-    cards[i].forEach(function (pid, j) { s += '<rect x="' + (u + 2) + '" y="' + (20 + j * 12.5) + '" width="29" height="10" rx="1" class="card card-' + pid + '"/>' + t(u + 4, 26.5 + j * 12.5, pid.toUpperCase(), 3.6, 'ink b'); });
+    cards[i].forEach(function (pid, j) { s += '<rect x="' + (u + 2) + '" y="' + (20 + j * 12.5) + '" width="29" height="10" rx="1" class="card"/>' + t(u + 4, 26.5 + j * 12.5, pid.toUpperCase(), 3.6, 'ink b'); });
   });
   deco(onTop(446, 356, 7.05, s));
 } });
-part({ id: 'plug', layer: 'Downstream', name: 'Calendar plug', bbox: [656, 366, 0, 70, 58, 40], draw: function () {
+part({ id: 'plug', layer: 'Passed on', name: 'Calendar connector', bbox: [656, 366, 0, 70, 58, 40], draw: function () {
   box(660, 370, 0, 60, 50, 30, 'amber');
-  deco(onFront(660, 420, 30, t(30, 12, 'CALENDAR PLUG', 5.2, 'ink b', 'middle') + t(30, 20, 'POST DATE → STATUS', 3.8, 'ink mono', 'middle')));
+  deco(onFront(660, 420, 30, t(30, 12, 'CALENDAR', 5.2, 'ink b', 'middle') + t(30, 18.5, 'CONNECTOR', 5.2, 'ink b', 'middle') + t(30, 25, 'POST DATE → STATUS', 3.6, 'ink mono', 'middle')));
   box(674, 382, 30, 30, 22, 6, 'slate');
   deco(onTop(674, 382, 36.05, '<rect x="7" y="6" width="3" height="9" rx="1" class="slot"/><rect x="20" y="6" width="3" height="9" rx="1" class="slot"/>'));
 } });
-part({ id: 'report', layer: 'Downstream', name: 'Visibility report', bbox: [776, 356, 0, 130, 120, 44], draw: function () {
+part({ id: 'report', layer: 'Passed on', name: 'Mismatch report', bbox: [776, 356, 0, 130, 114, 44], draw: function () {
   box(780, 360, 0, 120, 70, 38, 'steel');
   deco(onFront(780, 430, 38, '<rect x="8" y="8" width="34" height="12" rx="1.5" class="screen"/>' + t(25, 16, 'MISMATCH 2', 4.2, 'scrStop mono b', 'middle') + '<circle cx="100" cy="14" r="4" class="ledGo"/>'));
   box(798, 372, 38, 84, 14, 4, 'slate');
-  box(800, 400, 38, 80, 70, 1, 'paper');
-  var s = t(4, 8, 'AI VISIBILITY REPORT', 4.8, 'ink b');
-  ['l-go', 'l-stop', 'l-part', 'l-go', 'l-stop', 'l-part', 'l-go'].forEach(function (m, i) { s += '<rect x="4" y="' + (13 + i * 7.6) + '" width="6" height="4.6" rx="1" class="lamp ' + m + '"/><rect x="14" y="' + (14.6 + i * 7.6) + '" width="' + (40 + (i % 3) * 8) + '" height="1.4" class="rule"/>'; });
+  box(800, 400, 38, 80, 66, 1, 'paper');
+  var s = t(4, 8, 'MISMATCH REPORT', 4.8, 'ink b');
+  ['l-go', 'l-stop', 'l-part', 'l-go', 'l-stop', 'l-part', 'l-go'].forEach(function (m, i) { s += '<circle cx="6" cy="' + (15 + i * 7.2) + '" r="2" class="dot ' + m + '"/><rect x="12" y="' + (14.3 + i * 7.2) + '" width="' + (40 + (i % 3) * 8) + '" height="1.4" class="rule"/>'; });
   deco(onTop(800, 400, 39.05, s));
+} });
+part({ id: 'api', layer: 'Passed on', name: 'Status API', bbox: [656, 472, 0, 88, 60, 40], draw: function () {
+  box(660, 476, 0, 80, 50, 34, 'steel');
+  deco(onFront(660, 526, 34, '<rect x="6" y="6" width="68" height="16" rx="1.5" class="screen"/>' + t(10, 12.5, 'GET /api/status.json', 4.2, 'scrInk mono') + t(10, 18.5, '200 OK · evidence + dates', 3.6, 'scrDim mono') + t(40, 29, 'STATUS API', 5.2, 'ink b', 'middle')));
+  for (var k = 0; k < 4; k++) { box(668 + k * 16, 488, 34, 8, 20, 4, 'slate'); }
+} });
+part({ id: 'consumers', layer: 'Passed on', name: 'Agents and other tools', bbox: [786, 470, 0, 166, 64, 44], draw: function () {
+  /* an AI agent's terminal */
+  box(790, 480, 0, 40, 30, 4, 'slate'); box(792, 486, 4, 36, 6, 28, 'slate');
+  deco(onFront(792, 492, 32, '<rect x="3" y="3" width="30" height="20" rx="1" class="screen"/>' + t(5, 9, '> agent', 3.6, 'scrInk mono') + t(5, 14, 'status?', 3.6, 'scrDim mono') + t(18, 27, 'AI AGENT', 3.6, 'ink b', 'middle')));
+  /* a dashboard */
+  box(846, 480, 0, 44, 30, 4, 'slate'); box(848, 486, 4, 40, 6, 30, 'slate');
+  deco(onFront(848, 492, 34, '<rect x="3" y="3" width="34" height="22" rx="1" class="pgBg"/><rect x="6" y="15" width="4" height="7" class="barM"/><rect x="12" y="11" width="4" height="11" class="barM"/><rect x="18" y="8" width="4" height="14" class="barM"/><rect x="24" y="13" width="4" height="9" class="barM"/>' + t(20, 29, 'DASHBOARD', 3.6, 'ink b', 'middle')));
+  /* a chat alert */
+  box(906, 484, 0, 40, 26, 22, 'paper');
+  deco(onFront(906, 510, 22, '<rect x="4" y="3" width="30" height="10" rx="3" class="bubble"/>' + t(19, 9.6, 'X changed', 3.6, 'ink b', 'middle') + t(20, 19, 'CHAT ALERT', 3.6, 'ink b', 'middle')));
 } });
 
 /* ---------------- assembly ---------------- */
@@ -505,32 +588,36 @@ function screenBox(points) {
   return { x: x0, y: y0, w: Math.max.apply(null, xs) - x0, h: Math.max.apply(null, ys) - y0 };
 }
 function pipePath(p) { return p.pts.map(function (q, i) { var s = P(q[0], q[1], q[2]); return (i ? 'L' : 'M') + f1(s[0]) + ' ' + f1(s[1]); }).join(' '); }
+var FACE_PARTS = { table: 0.1, evidence: 0.2, dealslist: 0.3 };
 function partDepth(p) {
   var c = center(p);
-  if (p.id === 'controls' || p.id === 'lampfield') { var pc = center(PARTS.filter(function (q) { return q.id === 'panel'; })[0]); return depthOf(pc[0], pc[1], pc[2]) + (p.id === 'lampfield' ? 0.2 : 0.1); }
+  if (FACE_PARTS[p.id]) { var pc = center(PARTS.filter(function (q) { return q.id === 'page'; })[0]); return depthOf(pc[0], pc[1], pc[2]) + FACE_PARTS[p.id]; }
   return depthOf(c[0], c[1], c[2]);
 }
 function tagAnchor(p) { var b = p.bbox; return p.tagAnchor ? P(p.tagAnchor[0], p.tagAnchor[1], p.tagAnchor[2]) : P(b[0] + b[3] / 2, b[1] + b[4] / 2, b[2] + b[5]); }
 
 function buildScene() {
   var s = '';
-  ITEMS = []; box(0, 0, -16, 980, 480, 16, 'base'); s += '<g class="platform">' + ITEMS[0].svg + '</g>';
+  ITEMS = []; box(0, 0, -16, FLOOR.w, FLOOR.d, 16, 'base'); s += '<g class="platform">' + ITEMS[0].svg + '</g>';
   ZONES.forEach(function (z) {
     ITEMS = []; box(z.x, z.y, 0, z.w, z.d, 0.01, 'zone');
     s += '<g class="zone">' + ITEMS[0].svg + onTop(z.x, z.y + z.d, 0.02, t(z.u || 8, -3, z.label, 10, 'zoneLabel')) + '</g>';
   });
+  BANDS.forEach(function (bd) { s += onTop(bd.x, bd.y, 0.02, t(0, 9, bd.label, 9, 'bandLabel')); });
   ITEMS = []; box(30, 336, 0, 360, 124, 1.5, 'tb');
-  s += '<g class="titleblock">' + ITEMS[0].svg + onTop(30, 336, 1.55, '<rect x="10" y="10" width="340" height="104" class="tbFrame"/><line x1="10" y1="52" x2="350" y2="52" class="tbLine"/><line x1="230" y1="52" x2="230" y2="114" class="tbLine"/>' +
-    t(20, 33, 'AI ACCESS PANEL', 18, 'tbText b') + t(20, 46, 'ROOM PLAN · CONCEPT', 7.5, 'tbText') +
-    '<path d="M22 70 H70" class="pipeO" style="stroke-width:5"/><path d="M22 70 H70" class="pipeI" style="stroke-width:3"/><circle cx="46" cy="70" r="2.6" class="pulse"/>' + t(80, 73, 'DATA FLOW', 8, 'tbText b') +
-    '<rect x="22" y="84" width="48" height="18" class="tbZone"/>' + t(80, 96, 'ZONE', 8, 'tbText b') + t(240, 70, 'LAMP STATES', 8, 'tbText b') + t(240, 82, 'SAMPLE DATA', 8, 'tbText')) + '</g>';
+  s += '<g class="titleblock">' + ITEMS[0].svg + onTop(30, 336, 1.55, '<rect x="10" y="10" width="340" height="104" class="tbFrame"/><line x1="10" y1="52" x2="350" y2="52" class="tbLine"/><line x1="236" y1="52" x2="236" y2="114" class="tbLine"/>' +
+    t(20, 33, 'AI ACCESS PANEL', 18, 'tbText b') + t(20, 46, 'UNDER THE HOOD · CONCEPT', 7.5, 'tbText') +
+    '<path d="M22 68 H62" class="pipeO" style="stroke-width:5"/><path d="M22 68 H62" class="pipeI" style="stroke-width:3"/>' + t(70, 70.5, 'MOVES DURING A CHECK RUN', 6.4, 'tbText b') +
+    '<path d="M22 84 H62" class="pipeO" style="stroke-width:5"/><path d="M22 84 H62" class="pipeI pipeDash" style="stroke-width:3"/>' + t(70, 86.5, 'READ WHEN ASKED', 6.4, 'tbText b') +
+    '<rect x="22" y="94" width="40" height="13" class="tbZone"/>' + t(70, 103, 'ZONE', 6.4, 'tbText b') +
+    t(246, 70, 'STATUSES', 7, 'tbText b') + t(246, 81, 'SAMPLE DATA', 7, 'tbText')) + '</g>';
   s += '<g class="pipes">';
-  PIPES.forEach(function (p) { var d = pipePath(p); s += '<g class="pipe" data-pipe="' + p.id + '"><path d="' + d + '" class="pipeO"/><path d="' + d + '" class="pipeI"/></g>'; });
+  PIPES.forEach(function (p) { var d = pipePath(p); s += '<g class="pipe pipe-' + p.kind + '" data-pipe="' + p.id + '"><path d="' + d + '" class="pipeO"/><path d="' + d + '" class="pipeI' + (p.kind === 'demand' ? ' pipeDash' : '') + '"/></g>'; });
   s += '</g>';
   PARTS.slice().sort(function (a, b) { return partDepth(a) - partDepth(b); }).forEach(function (p) {
     ITEMS = []; p.draw();
     var items = ITEMS.slice().sort(function (a, b) { return a.depth - b.depth; });
-    if (p.id === 'controls' || p.id === 'lampfield') { items = ITEMS; }
+    if (FACE_PARTS[p.id]) { items = ITEMS; }
     s += '<g class="part" data-part="' + p.id + '">' + items.map(function (i) { return i.svg; }).join('') + '</g>';
   });
   ITEMS = null;
@@ -540,8 +627,12 @@ function buildScene() {
 
 /* labels sit above their part; any that would collide are pushed up and get a leader line */
 function buildTags() {
-  var tags = PARTS.filter(function (p) { return !((p.id === 'controls' || p.id === 'lampfield') && facing(0, 1) <= 0.02); }).map(function (p) {
+  var tags = PARTS.filter(function (p) { return !(FACE_PARTS[p.id] && facing(0, 1) <= 0.02); }).map(function (p) {
     var a = tagAnchor(p), w = p.name.length * 5.4 + 16;
+    if (p.tagSide) {
+      var pb = screenBox(partCorners(PARTS.filter(function (q) { return q.id === 'page'; })[0]));
+      return { p: p, a: a, w: w, cx: p.tagSide === 'right' ? pb.x + pb.w + w / 2 + 14 : pb.x - w / 2 - 14, cy: a[1] };
+    }
     return { p: p, a: a, w: w, cx: a[0], cy: a[1] - 16 };
   });
   tags.sort(function (m, n) { return n.a[1] - m.a[1]; });
@@ -559,7 +650,7 @@ function buildTags() {
 
 function sceneBounds() {
   var pts2 = [];
-  [[0, 0], [980, 0], [0, 480], [980, 480]].forEach(function (c) { pts2.push(P(c[0], c[1], 0)); pts2.push(P(c[0], c[1], -16)); });
+  [[0, 0], [FLOOR.w, 0], [0, FLOOR.d], [FLOOR.w, FLOOR.d]].forEach(function (c) { pts2.push(P(c[0], c[1], 0)); pts2.push(P(c[0], c[1], -16)); });
   PARTS.forEach(function (p) { pts2 = pts2.concat(partCorners(p)); });
   var b = screenBox(pts2);
   return { x: b.x - 30, y: b.y - 70, w: b.w + 60, h: b.h + 100 };
@@ -576,43 +667,67 @@ if (typeof module !== 'undefined') { module.exports = { DEFAULT_VIEW: DEFAULT_VI
 <script>
 (function () {
   var INFO = {
-    robots: { does: 'Each platform\'s live robots.txt says which crawlers may fetch which paths.', uses: 'Six public files, one per platform.', makes: 'The raw rules the robots.txt reader works from.', runs: 'Fetched on every scheduled run.', limit: 'A rule is a request to crawlers, not a lock. Permitted doesn\'t mean fetched.' },
-    botdocs: { does: 'Each AI company\'s own page listing its crawlers, their user-agent names and what each one is for.', uses: 'Public documentation from OpenAI, Anthropic, Google, Microsoft and Perplexity.', makes: 'The user-agent names the reader matches, and notes on fetchers that act for a user.', runs: 'Re-read when a company adds or renames a bot.', limit: 'OpenAI says robots.txt may not apply to ChatGPT-User, because a person starts the request.' },
-    policies: { does: 'The privacy and AI pages of the company that owns each platform.', uses: 'Public policy pages.', makes: 'Group C lights: whether the owner\'s own AI uses public posts.', runs: 'Read by a person. The wording needs judgment.', limit: 'Answers change with region and opt-out settings, so each light states the account it assumes. Shown here as not checked yet.' },
-    dealsrc: { does: 'Announcements of data licensing and API deals between platforms and AI companies.', uses: 'Statements from either party, and press reports.', makes: 'Entries on the deals board.', runs: 'Logged by a person.', limit: 'A press report with no statement from either party stays amber.' },
-    browser: { does: 'A clean browser with no account, on a US connection.', uses: 'Public post URLs.', makes: 'What a logged-out visitor gets: full text, cut-off text or a login wall, with a screenshot.', runs: 'Driven by the logged-out check.', limit: 'A verified crawler may be served something different from what a logged-out person sees.' },
-    scheduler: { does: 'Starts each run of checks.', uses: 'A schedule.', makes: 'The start signal for every check.', runs: 'Proposed: weekly, for a 4-week proof run, then decide whether it stays on.', limit: 'Cadence isn\'t decided yet.' },
-    reader: { does: 'Fetches every robots.txt, finds the rules that apply to each bot\'s user agent, and keeps the matching line as evidence.', uses: 'robots.txt files and AI bot documentation.', makes: 'Group A and D results, each with its evidence line.', runs: 'Unattended.', limit: 'Can\'t see CDN or firewall bot blocking, which can stop a crawler before robots.txt matters.' },
-    wallcheck: { does: 'Opens a public post on each platform while logged out, and saves a screenshot.', uses: 'The logged-out browser and a sample public post per platform.', makes: 'Group B results: open, partial or walled.', runs: 'Partly unattended. It needs a headless browser, and results need a human glance.', limit: 'It measures a stand-in for what crawlers get.' },
-    desk: { does: 'A person reads owners\' policies against the stated account assumption, and logs deals.', uses: 'Owners\' AI policies and deal announcements.', makes: 'Group C results and deal entries, each with a quote and its source.', runs: 'Human review.', limit: 'The slowest step in a run. It sets how often a full check is realistic.' },
-    detector: { does: 'Compares every new result with the previous record. A change sets that light\'s changed flag for 30 days.', uses: 'New results and the records cabinet.', makes: 'Changed flags, which make lamps flash until someone presses ACK.', runs: 'Unattended.', limit: 'Only as good as the checks that feed it.' },
-    records: { does: 'Holds the current record for every light, keyed by platform, group and light name.', uses: 'Results from the checks.', makes: 'Status, evidence, source, screenshot, check date and changed flag for each light.', runs: 'Updated on every run.', limit: 'Adding a bot adds one record. Nothing else moves.' },
-    history: { does: 'Keeps every past snapshot of the records, dated.', uses: 'Each completed run.', makes: 'The status of any platform on any date. The calendar plug depends on it.', runs: 'Appended on every run.', limit: 'Dates before the first snapshot have no status.' },
-    panel: { does: 'The cabinet that shows everything at once: header, tally counters, lamp field and controls.', uses: 'The records cabinet.', makes: 'One view of which AI systems are permitted to reach each platform\'s public posts.', runs: 'Always on, once built.', limit: 'It shows stated permissions and visible walls, not actual use.' },
-    controls: { does: 'TEST lights every lamp for 2.5 seconds. ACK stops changed lamps from flashing.', uses: 'Nothing beyond the panel.', makes: 'A lamp check and an acknowledgement.', runs: 'Pressed by the viewer. Tapping a single lamp also acknowledges it.', limit: 'RESET was dropped in the September review.' },
-    lampfield: { does: 'One column per platform, one row per light, in four groups: A crawler access, B login wall, C owner\'s AI, D user fetchers.', uses: 'Current records.', makes: 'Green, amber, red or unchecked for every light. Changed lamps flash.', runs: 'Live.', limit: 'Group C lamps are pill-shaped. Group D is still undecided, so it\'s drawn unchecked.' },
-    readout: { does: 'Shows the selected light\'s rule, source, evidence, check date and 30-day change flag.', uses: 'That light\'s record.', makes: 'The answer to "how do we know?" for one light.', runs: 'Updates when a lamp is selected.', limit: 'Shows what was recorded at the last check, nothing newer.' },
-    dealsboard: { does: 'Lists licensing and API deals that robots.txt and login walls don\'t show.', uses: 'Deal entries from the desk.', makes: 'Green when a party announced it and it\'s in force, amber when only the press reported it, ENDED when it lapses.', runs: 'Updated when a deal is logged.', limit: 'Shown here as not checked yet.' },
-    calendar: { does: 'Your planned posts: date, platform, title and goal.', uses: 'A spreadsheet, a Notion database or a CSV export.', makes: 'Rows for the calendar plug.', runs: 'On demand, whenever the plan changes.', limit: 'Only posts whose goal is AI visibility are judged.' },
-    plug: { does: 'Joins each post to its platform\'s status on the post\'s date, taken from the status history.', uses: 'The content calendar and the status history.', makes: 'A reach level for each post: reachable, limited or closed.', runs: 'On demand, or whenever the calendar changes.', limit: 'It judges permissions and walls. It can\'t say whether an AI system will actually pick a post up.' },
-    report: { does: 'Shows, week by week and platform by platform, whether AI-visibility posts go where AI systems can reach them.', uses: 'The plug\'s results.', makes: 'Matches, weak spots, mismatches, and open platforms with nothing planned.', runs: 'On demand.', limit: 'It inherits every limit of the panel\'s lights.' }
+    robots: { does: 'Each platform publishes a robots.txt file that tells crawlers which pages they may fetch. These are the six live files, one per platform.', uses: 'Nothing. They are public files on each platform\'s website.', makes: 'The raw rules the robots.txt checker reads.', runs: 'Read during every check run.', limit: 'A robots.txt rule is a request to crawlers, not a lock. Permitted doesn\'t mean a bot actually fetches the page.' },
+    botdocs: { does: 'Pages where OpenAI, Anthropic, Google, Microsoft and Perplexity list their own crawlers, the names they use and what each one is for.', uses: 'Public documentation.', makes: 'The bot names the robots.txt checker looks for, and notes on bots that fetch a page when a person asks.', runs: 'Re-read when a company adds or renames a bot.', limit: 'OpenAI says robots.txt may not apply to ChatGPT-User, because a person starts the request.' },
+    policies: { does: 'The privacy and AI pages of the company that owns each platform, which say whether it uses public posts for its own AI.', uses: 'Public policy pages.', makes: 'The "Owner\'s AI" column on the page.', runs: 'Read by a person during human review.', limit: 'The answer changes with region and account settings, so each status states which account it assumes. Shown here as not checked.' },
+    dealsrc: { does: 'Announcements of data licensing and API deals between platforms and AI companies.', uses: 'Statements from either company, and press reports.', makes: 'Entries in the deals list on the page.', runs: 'Logged by a person when a deal is announced.', limit: 'A press report with no statement from either company is marked as unconfirmed.' },
+    browser: { does: 'A clean browser with no account and no login, on a US connection.', uses: 'One public post URL per platform.', makes: 'What a visitor without an account sees: the full post, part of it, or a login wall.', runs: 'Used by the login-wall checker.', limit: 'A verified crawler may be served something different from what a logged-out person sees.' },
+    trigger: { does: 'Starts a check run. Runs start on a weekly schedule, or on request from a person or an agent, for one platform or for all of them.', uses: 'The schedule, and requests coming back from the status API.', makes: 'The start signal for the checkers.', runs: 'Weekly, and whenever someone asks for a fresh check.', limit: 'The weekly cadence is a proposal, not a decision.' },
+    reader: { does: 'Fetches each platform\'s robots.txt, finds the rules that apply to each AI crawler by name, and keeps the matching line as evidence.', uses: 'Platform robots.txt files and the AI companies\' bot lists.', makes: 'The "AI crawlers" column: permitted, partly permitted or blocked, per crawler.', runs: 'Automatically, in every check run.', limit: 'Can\'t see firewall or CDN bot blocking, which can stop a crawler before robots.txt matters.' },
+    wallcheck: { does: 'Opens a public post on each platform without logging in, and saves a screenshot of what loads.', uses: 'The browser with no account.', makes: 'The "Login wall" column: open, partial or login required.', runs: 'Automatically in each run, with a person glancing at the screenshots.', limit: 'It shows what a logged-out person sees, which stands in for what a crawler gets.' },
+    desk: { does: 'A person reads the platform owners\' AI policies and logs new licensing deals, quoting the source for each.', uses: 'Platform owners\' AI policies and deal announcements.', makes: 'The "Owner\'s AI" column and the deals list.', runs: 'When a person gets to it, not on the run\'s clock.', limit: 'The slowest step. It sets how often a complete check is realistic.' },
+    detector: { does: 'Compares every new result with the one before it. When a status changes, it flags that status as changed for 30 days.', uses: 'New results and the current records.', makes: 'The "changed" markers on the page and in the API.', runs: 'Automatically, at the end of each run.', limit: 'Only as good as the checks that feed it.' },
+    records: { does: 'The database holding the latest status for every platform, check and crawler, each with its evidence, source, screenshot and check date.', uses: 'Results from the checkers and the human review desk.', makes: 'Everything the page shows and the status API returns.', runs: 'Updated after every run. Read whenever the page opens or the API is called.', limit: 'Adding a crawler adds one record. Nothing else changes.' },
+    history: { does: 'Keeps a dated copy of the records after every run.', uses: 'Each completed run.', makes: 'The status of any platform on any past date.', runs: 'Added to after every run. Read on demand.', limit: 'Dates before the first check have no status.' },
+    page: { does: 'The web page people see. It reads the current records each time it opens and shows them in plain terms.', uses: 'Current records.', makes: 'One screen showing which AI systems may read public posts on each platform, and how we know.', runs: 'Live: every visit reads the latest records.', limit: 'It shows stated permissions and visible login walls, not what AI systems actually do with the posts.' },
+    table: { does: 'One row per platform. Shows how many of 8 AI crawlers are permitted, whether there\'s a login wall, and the owner\'s AI policy. Recent changes are marked.', uses: 'Current records.', makes: 'The at-a-glance answer.', runs: 'Every time the page opens.', limit: 'A summary. The per-crawler detail is one click away.' },
+    evidence: { does: 'Opens when you pick a cell in the status table. Shows the rule, the source, the exact evidence, the check date and whether it changed recently.', uses: 'That status\'s record.', makes: 'The answer to "how do we know?" for one status.', runs: 'On click.', limit: 'Shows what was recorded at the last check, nothing newer.' },
+    dealslist: { does: 'Lists licensing and API deals between platforms and AI companies, which give access that robots.txt doesn\'t show.', uses: 'Deal entries from the human review desk.', makes: 'Confirmed deals, and press-only reports marked as unconfirmed.', runs: 'Updated when a deal is logged.', limit: 'Shown here with none logged.' },
+    calendar: { does: 'Your planned posts: date, platform, title and goal.', uses: 'A spreadsheet, a Notion database or a CSV export.', makes: 'The list of posts the calendar connector checks.', runs: 'Whenever the plan changes.', limit: 'Only posts whose goal is AI visibility are checked.' },
+    plug: { does: 'Checks each planned post against its platform\'s status on the day it goes out, using the status history.', uses: 'The content calendar and the status history.', makes: 'A verdict per post: reachable, limited or closed to AI crawlers.', runs: 'On demand, or whenever the calendar changes.', limit: 'It judges permissions and walls. It can\'t say whether an AI system will actually pick a post up.' },
+    report: { does: 'Lists the posts aimed at AI visibility that are headed to platforms AI crawlers can\'t reach that week, and open platforms with nothing planned.', uses: 'The calendar connector\'s verdicts.', makes: 'A short list to act on before posts go out.', runs: 'On demand.', limit: 'Inherits every limit of the statuses behind it.' },
+    api: { does: 'A machine-readable version of the page. Agents and other tools can ask for any platform\'s current status, with its evidence and check date, or for its status on a past date.', uses: 'Current records and the status history.', makes: 'Status data in JSON, and requests for fresh checks sent back to the check trigger.', runs: 'On demand, whenever something calls it.', limit: 'A fresh check takes as long as the checks it triggers. Human review steps still wait for a person.' },
+    consumers: { does: 'Anything outside the page that uses the same records: an AI agent planning content, a reporting dashboard, a chat alert when a platform changes.', uses: 'The status API.', makes: 'Their own work, informed by current statuses.', runs: 'Whenever they ask.', limit: 'These are examples of what could connect. Only the calendar connector is sketched in detail here.' }
   };
-  var LAYERS = ['Sources', 'Checks', 'Records', 'Panel', 'Downstream'];
-  var LAYER_NOTE = {
-    Sources: 'Public material the checks read.', Checks: 'Machines and people that turn sources into results.', Records: 'Where results are kept, now and over time.',
-    Panel: 'What a visitor sees.', Downstream: 'Your content calendar, held up against the panel.'
+  var LAYERS = ['Sources', 'Checks', 'Records', 'The page', 'Passed on'];
+  var TRACES = {
+    scheduled: {
+      label: 'Scheduled check',
+      intro: 'Follow LinkedIn\'s GPTBot status through a weekly check run, onto the page, and out to other systems.',
+      steps: [
+        { text: 'The check trigger starts the weekly run.', parts: ['trigger'], pipes: [] },
+        { text: 'The robots.txt checker fetches LinkedIn\'s live robots.txt.', parts: ['robots', 'reader'], pipes: ['p-src'] },
+        { text: 'It finds the rules for GPTBot, using the name from OpenAI\'s bot list, and keeps the matching line as evidence.', parts: ['botdocs', 'reader'], pipes: ['p-src'] },
+        { text: 'The change detector compares the result with last week\'s.', parts: ['detector', 'records'], pipes: ['p-chk'] },
+        { text: 'The current record for LinkedIn and GPTBot is updated, and a dated copy goes into the status history.', parts: ['records', 'history'], pipes: ['p-chk'] },
+        { text: 'The next time someone opens the page, the status table reads the current records and shows LinkedIn\'s new count, marked as changed.', parts: ['page', 'table'], pipes: ['p-rec'] },
+        { text: 'Picking the cell opens the evidence panel: rule, source, the matching line and the check date.', parts: ['table', 'evidence'], pipes: [] },
+        { text: 'The page shows the result to visitors, and the status API makes the same data available to agents and other tools.', parts: ['page', 'api', 'consumers'], pipes: ['p-rec', 'p-api', 'p-cons'] },
+        { text: 'The calendar connector looks up LinkedIn\'s status on the date of each LinkedIn post.', parts: ['calendar', 'history', 'plug'], pipes: ['p-hist', 'p-cal'] },
+        { text: 'The mismatch report flags AI-visibility posts headed to platforms AI crawlers can\'t reach that week.', parts: ['plug', 'report'], pipes: ['p-rep'] }
+      ]
+    },
+    agent: {
+      label: 'Agent asks',
+      intro: 'Follow an AI agent that needs Instagram\'s status now, outside the weekly schedule.',
+      steps: [
+        { text: 'An AI agent working on a content plan asks the status API about Instagram.', parts: ['consumers', 'api'], pipes: ['p-cons'] },
+        { text: 'The API reads Instagram\'s current records and returns each status with its evidence and check date.', parts: ['api', 'records'], pipes: ['p-api'] },
+        { text: 'The last check is nine days old, so the agent asks for a fresh one. The request goes back to the check trigger.', parts: ['api', 'trigger'], pipes: ['p-req'] },
+        { text: 'The trigger runs only Instagram\'s automatic checks, not the whole set.', parts: ['trigger', 'reader', 'wallcheck'], pipes: ['p-src'] },
+        { text: 'Results land in the current records and the history like any run. The owner\'s AI policy waits for a person at the review desk.', parts: ['records', 'history', 'desk'], pipes: ['p-chk'] },
+        { text: 'The agent gets the updated statuses. Anyone opening the page sees the same.', parts: ['api', 'page'], pipes: ['p-api', 'p-rec'] }
+      ]
+    }
   };
-  var STEPS = [
-    { text: 'The scheduler starts the weekly run.', parts: ['scheduler'], pipes: [] },
-    { text: 'The robots.txt reader fetches LinkedIn\'s live robots.txt.', parts: ['robots', 'reader'], pipes: ['p-src'] },
-    { text: 'It finds the rules for GPTBot, using the user-agent name from OpenAI\'s bot documentation, and keeps the matching line as evidence.', parts: ['botdocs', 'reader'], pipes: ['p-src'] },
-    { text: 'The change detector compares the result with last week\'s record for the same light.', parts: ['detector', 'records'], pipes: ['p-chk'] },
-    { text: 'The record li.crawl.gptbot is written, and the run is added to the status history.', parts: ['records', 'history'], pipes: ['p-chk'] },
-    { text: 'The LinkedIn / GPTBot lamp lights. If it changed, it flashes until someone presses ACK.', parts: ['lampfield', 'controls'], pipes: ['p-rec'] },
-    { text: 'Selecting the lamp puts its rule, source, evidence and check date on the readout.', parts: ['lampfield', 'readout'], pipes: [] },
-    { text: 'The calendar plug looks up LinkedIn\'s status on the date of each LinkedIn post.', parts: ['calendar', 'history', 'plug'], pipes: ['p-hist', 'p-cal'] },
-    { text: 'The report flags AI-visibility posts on platforms AI systems can\'t reach that week.', parts: ['plug', 'report'], pipes: ['p-rep'] }
-  ];
+  var STEPS = TRACES.scheduled.steps;
+  /* where each section of the web page comes from, for the Web page view */
+  var PAGE_SOURCES = {
+    table: ['records', 'reader', 'wallcheck', 'desk', 'detector'],
+    evidence: ['records', 'robots', 'browser'],
+    dealslist: ['records', 'desk', 'dealsrc'],
+    agents: ['api', 'records', 'history']
+  };
 
   var svg = document.getElementById('scene');
   var stage = document.getElementById('stage');
@@ -760,7 +875,7 @@ if (typeof module !== 'undefined') { module.exports = { DEFAULT_VIEW: DEFAULT_VI
   });
 
 
-  /* ---------- turning the room ---------- */
+  /* ---------- turning the diagram ---------- */
   var turnEl = document.getElementById('turn'), tiltEl = document.getElementById('tilt');
   var turnOut = document.getElementById('turnOut'), tiltOut = document.getElementById('tiltOut');
   var pendingCam = null, camRaf = null;
@@ -823,17 +938,19 @@ if (typeof module !== 'undefined') { module.exports = { DEFAULT_VIEW: DEFAULT_VI
   });
   function overview() {
     var h = '<span class="layerchip">Overview</span><h3>What you\'re looking at</h3>' +
-      '<p class="ovLead">AI Access Panel tracks whether AI systems like ChatGPT, Claude, Gemini and Perplexity are allowed to read public posts on six social platforms, and flags planned posts that won\'t reach them. The room on the left shows how it works: click any part to see what it does.</p>' +
+      '<p class="ovLead">AI Access Panel is a web page that shows whether AI systems like ChatGPT, Claude, Gemini and Perplexity are allowed to read public posts on six social platforms. This diagram shows what runs under that page, and what the page can hand on to other tools. Click any part to see what it does.</p>' +
       '<dl class="kvs">' +
-      '<div class="kv"><dt>Upstream: how it knows</dt><dd>It reads public sources: each platform\'s robots.txt, the AI companies\' lists of their own bots, what a logged-out visitor sees, platform owners\' AI policies and deal announcements. Machines and one person turn these into a green, amber or red light for each platform and AI system, and keep the evidence behind every light.</dd></div>' +
-      '<div class="kv"><dt>Downstream: what you do with it</dt><dd>Plug in your content calendar. Every post meant to show up in AI answers is checked against its platform\'s status on the day it goes out, and the report flags posts headed where AI systems can\'t reach.</dd></div>' +
+      '<div class="kv"><dt>Under the page: how it knows</dt><dd>It reads public sources: each platform\'s robots.txt, the AI companies\' lists of their own bots, what a visitor without an account sees, platform owners\' AI policies and deal announcements. Automatic checkers and one person turn these into a status for each platform and AI crawler, and keep the evidence behind every status.</dd></div>' +
+      '<div class="kv"><dt>Out of the page: where the data goes</dt><dd>The page\'s data can feed other systems. Agents and tools can ask the status API for any platform\'s status, with its evidence, and request a fresh check. The example worked out here is a content calendar: every post meant to show up in AI answers is checked against its platform\'s status on the day it goes out, and the report flags posts headed where AI systems can\'t reach.</dd></div>' +
+      '<div class="kv"><dt>Not all at once</dt><dd>Checks run weekly or on request. The page and the API read the records whenever someone asks. Human review happens when a person gets to it. In the diagram, solid lines move during a check run and dashed lines are read when asked.</dd></div>' +
       '<div class="kv"><dt>Who it\'s for</dt><dd>Social and content teams at B2B companies, and agencies running social for clients.</dd></div>' +
       '<div class="kv"><dt>Why it\'s useful</dt><dd><ul class="why">' +
       '<li>One view instead of six platforms\' fine print.</li>' +
-      '<li>Every light shows its source and the date it was checked.</li>' +
-      '<li>Changes flash, so a platform closing its doors doesn\'t go unnoticed.</li>' +
+      '<li>Every status shows its source and the date it was checked.</li>' +
+      '<li>Changes are marked, so a platform closing its doors doesn\'t go unnoticed.</li>' +
+      '<li>Agents get the same answer as people, with the evidence attached.</li>' +
       '<li>Mismatches show up before posts go out, not after.</li></ul></dd></div></dl>' +
-      '<p class="limit"><b>Concept.</b> The lamp states here are sample data. Click any part to see what it does, or press Start under the room to follow one light from source to report.</p>';
+      '<p class="limit"><b>Concept.</b> Statuses shown are sample data. Switch to Web page to see the page itself, or press Start to follow a status through the process.</p>';
     info.innerHTML = h;
   }
   function showInfo(id) {
@@ -842,7 +959,7 @@ if (typeof module !== 'undefined') { module.exports = { DEFAULT_VIEW: DEFAULT_VI
       '<div class="kv"><dt>What it does</dt><dd>' + esc(d.does) + '</dd></div>' +
       '<div class="kv"><dt>Uses</dt><dd>' + esc(d.uses) + '</dd></div>' +
       '<div class="kv"><dt>Produces</dt><dd>' + esc(d.makes) + '</dd></div>' +
-      '<div class="kv"><dt>Runs</dt><dd>' + esc(d.runs) + '</dd></div></dl>' +
+      '<div class="kv"><dt>When it runs</dt><dd>' + esc(d.runs) + '</dd></div></dl>' +
       '<p class="limit"><b>Limit.</b> ' + esc(d.limit) + '</p>';
     document.getElementById('backOv').addEventListener('click', function () { stopTrace(); mark([], []); overview(); });
   }
@@ -874,7 +991,18 @@ if (typeof module !== 'undefined') { module.exports = { DEFAULT_VIEW: DEFAULT_VI
   });
 
   /* ---------- trace ---------- */
-  var traceIdx = -1;
+  var traceIdx = -1, traceKey = 'scheduled';
+  var trBtns = [document.getElementById('trS'), document.getElementById('trA')];
+  trBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.id === 'trS' ? 'scheduled' : 'agent';
+      if (traceIdx >= 0) { traceIdx = -1; mark([], []); overview(); }
+      traceKey = k; STEPS = TRACES[k].steps;
+      trBtns.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+      stepNum.textContent = '0 / ' + STEPS.length; stepText.textContent = TRACES[k].intro;
+      prevB.disabled = true; nextB.textContent = 'Start';
+    });
+  });
   var stepNum = document.getElementById('stepNum'), stepText = document.getElementById('stepText');
   var prevB = document.getElementById('stepPrev'), nextB = document.getElementById('stepNext');
   function showStep(i) {
@@ -892,7 +1020,7 @@ if (typeof module !== 'undefined') { module.exports = { DEFAULT_VIEW: DEFAULT_VI
     if (traceIdx < 0) { return; }
     traceIdx = -1;
     stepNum.textContent = '0 / ' + STEPS.length;
-    stepText.textContent = 'Follow LinkedIn\'s GPTBot light from its robots.txt file to the calendar report, one step at a time.';
+    stepText.textContent = TRACES[traceKey].intro;
     prevB.disabled = true; nextB.textContent = 'Start';
     mark([], []); overview();
   }
@@ -901,6 +1029,61 @@ if (typeof module !== 'undefined') { module.exports = { DEFAULT_VIEW: DEFAULT_VI
     showStep(traceIdx + 1);
   });
   prevB.addEventListener('click', function () { if (traceIdx > 0) { showStep(traceIdx - 1); } });
+
+
+  /* ---------- web page view ---------- */
+  var pageView = document.getElementById('pageView');
+  var viewBtns = [document.getElementById('vProcess'), document.getElementById('vPage')];
+  var STATUS_WORD = { g: 'Permitted', a: 'Partly permitted', r: 'Blocked', u: 'Not checked' };
+  var WALL_WORD = { g: 'Open', a: 'Partial', r: 'Login required', u: 'Not checked' };
+  var pvPick = 'li';
+  function dotHTML(c) { return '<span class="pvDot pv-' + c + '" aria-hidden="true"></span>'; }
+  function comesFrom(key) {
+    return '<div class="pvFrom"><span>Comes from</span>' + PAGE_SOURCES[key].map(function (id) { return '<button type="button" data-goto="' + key + '" data-part-id="' + id + '">' + esc(byId[id].name) + '</button>'; }).join('') + '</div>';
+  }
+  function renderPage() {
+    var rows = PLATFORMS.map(function (pl) {
+      var codes = LATEST[pl.id], n = codes.split('').filter(function (c) { return c === 'g'; }).length;
+      var changed = pl.id === 'li' || pl.id === 'x';
+      return '<tr' + (pl.id === pvPick ? ' class="on"' : '') + '><th scope="row"><button type="button" class="pvRow" data-pick-row="' + pl.id + '">' + esc(pl.name) + '</button></th>' +
+        '<td><span class="pvDots">' + codes.split('').map(dotHTML).join('') + '</span><span class="pvNum">' + n + ' of 8</span></td>' +
+        '<td>' + WALL_WORD[WALL[pl.id]] + '</td><td class="pvMuted">Not checked</td><td>' + (changed ? '<span class="pvChanged">Changed</span>' : '') + '</td></tr>';
+    }).join('');
+    var pick = PLATFORMS.filter(function (p) { return p.id === pvPick; })[0];
+    var host = { li: 'linkedin.com', rd: 'reddit.com', yt: 'youtube.com', x: 'x.com', ig: 'instagram.com', fb: 'facebook.com' }[pvPick];
+    var ev = BOTS.map(function (b, i) { var c = LATEST[pvPick].charAt(i); return '<li>' + dotHTML(c) + '<span>' + esc(b) + '</span><span class="pvMuted">' + STATUS_WORD[c] + '</span></li>'; }).join('');
+    pageView.innerHTML = '<div class="pvWin"><div class="pvChrome"><span></span><span></span><span></span><div class="pvUrl">ai-access-panel</div></div><div class="pvBody">' +
+      '<header class="pvHead"><h3>AI Access Panel</h3><p>Which AI systems may read public posts on six platforms, and how we know.</p><p class="pvMuted pvMeta">Last full check Nov 16, 2026 · sample data</p></header>' +
+      '<div class="pvGrid"><section class="pvSec" aria-label="Status table"><div class="pvTableWrap"><table class="pvTable"><thead><tr><th scope="col">Platform</th><th scope="col">AI crawlers permitted</th><th scope="col">Login wall</th><th scope="col">Owner\'s AI</th><th scope="col"><span class="vh">Changes</span></th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<p class="pvMuted pvSmall">Pick a platform to see each crawler. Changed means a status moved in the last 30 days.</p>' + comesFrom('table') + '</section>' +
+      '<section class="pvSec pvEv" aria-label="Evidence panel"><h4>' + esc(pick.name) + '</h4><ul class="pvList">' + ev + '</ul>' +
+      '<dl class="pvKv"><div><dt>Source</dt><dd class="mono">' + host + '/robots.txt</dd></div><div><dt>Checked</dt><dd class="mono">2026-11-16</dd></div></dl>' + comesFrom('evidence') + '</section></div>' +
+      '<section class="pvSec" aria-label="Deals list"><h4>Licensing and API deals</h4><p class="pvMuted pvSmall">Deals between platforms and AI companies give access that robots.txt doesn\'t show.</p><p class="pvEmpty">None logged yet.</p>' + comesFrom('dealslist') + '</section>' +
+      '<footer class="pvSec pvFoot" aria-label="For agents and tools"><p><b>For agents and tools:</b> <code>GET /api/status.json</code> returns every status with its source and check date. Add <code>?date=</code> for a past date, or request a fresh check.</p>' + comesFrom('agents') + '</footer>' +
+      '</div></div>';
+  }
+  pageView.addEventListener('click', function (e) {
+    var row = e.target.closest('[data-pick-row]');
+    if (row) { pvPick = row.getAttribute('data-pick-row'); renderPage(); var again = pageView.querySelector('[data-pick-row="' + pvPick + '"]'); if (again) { again.focus(); } return; }
+    var go = e.target.closest('[data-goto]');
+    if (go) {
+      var ids = PAGE_SOURCES[go.getAttribute('data-goto')], first = go.getAttribute('data-part-id');
+      setView('process');
+      if (traceIdx >= 0) { traceIdx = -1; }
+      mark(ids, []); showInfo(first); focusParts(ids);
+    }
+  });
+  function setView(v) {
+    var page = v === 'page';
+    pageView.hidden = !page;
+    svg.style.visibility = page ? 'hidden' : 'visible';
+    stage.classList.toggle('pageMode', page);
+    viewBtns[0].setAttribute('aria-pressed', page ? 'false' : 'true');
+    viewBtns[1].setAttribute('aria-pressed', page ? 'true' : 'false');
+    if (page) { renderPage(); }
+  }
+  viewBtns[0].addEventListener('click', function () { setView('process'); });
+  viewBtns[1].addEventListener('click', function () { setView('page'); });
 
   /* ---------- flow pulses ---------- */
   var activePipes = null, flowOn = !reduce, visible = true;
