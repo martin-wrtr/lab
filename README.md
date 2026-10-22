@@ -6,12 +6,12 @@ Micro app concepts by [Martin Etchegaray](https://martinetchegaray.com). Each fo
 
 ### AI Access Panel
 
-A concept for a micro app that tracks whether AI systems are allowed to read public posts on LinkedIn, Reddit, YouTube, X, Instagram and Facebook, then checks a content calendar against it. It isn't built yet. The page lays out how it would work, part by part, as a room you can turn and walk through.
+A look under the hood of a concept micro app. On the surface, AI Access Panel is a single web page showing whether AI systems are allowed to read public posts on LinkedIn, Reddit, YouTube, X, Instagram and Facebook. Underneath, it's a process: public sources are read, checked and recorded, then shown on the page and passed on to other systems, such as a content calendar or an AI agent. The page lays that process out part by part, and shows the page itself. The app isn't built yet.
 
 - Page: https://martin-wrtr.github.io/lab/ai-access-panel/
 - Embed version: https://martin-wrtr.github.io/lab/ai-access-panel/embed.html
 
-The lamp states shown are sample data, not live checks.
+The statuses shown are sample data, not live checks.
 
 ## Files
 
