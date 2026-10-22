@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AI Access Panel Room</title>
+<title>AI Access Panel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -50,6 +50,9 @@ h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(38px,6v
 h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:30px;line-height:1;letter-spacing:.04em;text-transform:uppercase;text-wrap:balance}
 h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:20px;letter-spacing:.05em;text-transform:uppercase}
 .lede{margin:0;font-size:17px;color:var(--muted);max-width:66ch}
+.byline{margin:0;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.byline a{color:var(--fg);text-decoration-color:var(--hazard);text-underline-offset:3px}
+.byline a:focus-visible{outline:3px solid var(--hazard);outline-offset:2px}
 .datanote{margin:0;font-size:13px;color:var(--muted)}
 .datanote b{font-weight:600;color:var(--fg)}
 .bench{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
@@ -829,7 +832,7 @@ if (typeof module !== 'undefined') { module.exports = { DEFAULT_VIEW: DEFAULT_VI
   });
   function overview() {
     var h = '<span class="layerchip">Overview</span><h3>What you\'re looking at</h3>' +
-      '<p class="ovLead">A micro app laid out as a room. It answers one question for B2B marketers: are AI systems like ChatGPT, Claude, Gemini and Perplexity allowed to read what you post on LinkedIn, Reddit, YouTube, X, Instagram and Facebook?</p>' +
+      '<p class="ovLead">AI Access Panel tracks whether AI systems like ChatGPT, Claude, Gemini and Perplexity are allowed to read public posts on six social platforms, and flags planned posts that won\'t reach them. The room on the left shows how it works: click any part to see what it does.</p>' +
       '<dl class="kvs">' +
       '<div class="kv"><dt>Upstream: how it knows</dt><dd>It reads public sources: each platform\'s robots.txt, the AI companies\' lists of their own bots, what a logged-out visitor sees, platform owners\' AI policies and deal announcements. Machines and one person turn these into a green, amber or red light for each platform and AI system, and keep the evidence behind every light.</dd></div>' +
       '<div class="kv"><dt>Downstream: what you do with it</dt><dd>Plug in your content calendar. Every post meant to show up in AI answers is checked against its platform\'s status on the day it goes out, and the report flags posts headed where AI systems can\'t reach.</dd></div>' +

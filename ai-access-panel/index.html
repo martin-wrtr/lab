@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AI Access Panel Room</title>
+<title>AI Access Panel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<meta name="description" content="The AI access panel laid out as a room you can turn, tilt and zoom: what it reads, checks, keeps and shows, plus a calendar plug downstream.">
-<meta property="og:title" content="AI Access Panel Room">
-<meta property="og:description" content="The AI access panel laid out as a room you can turn, tilt and zoom: what it reads, checks, keeps and shows, plus a calendar plug downstream.">
+<meta name="description" content="A concept for a micro app that tracks whether AI systems are allowed to read public posts on LinkedIn, Reddit, YouTube, X, Instagram and Facebook, then checks a content calendar against it. It isn't built yet. This page lays out how it would work, part by part, as a room you can turn and walk through.">
+<meta property="og:title" content="AI Access Panel">
+<meta name="author" content="Martin Etchegaray">
+<meta property="og:description" content="A concept for a micro app that tracks whether AI systems are allowed to read public posts on LinkedIn, Reddit, YouTube, X, Instagram and Facebook, then checks a content calendar against it. It isn't built yet. This page lays out how it would work, part by part, as a room you can turn and walk through.">
 <meta property="og:type" content="website">
 <style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:inherit}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <style>
@@ -53,6 +54,9 @@ h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(38px,6v
 h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:30px;line-height:1;letter-spacing:.04em;text-transform:uppercase;text-wrap:balance}
 h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:20px;letter-spacing:.05em;text-transform:uppercase}
 .lede{margin:0;font-size:17px;color:var(--muted);max-width:66ch}
+.byline{margin:0;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.byline a{color:var(--fg);text-decoration-color:var(--hazard);text-underline-offset:3px}
+.byline a:focus-visible{outline:3px solid var(--hazard);outline-offset:2px}
 .datanote{margin:0;font-size:13px;color:var(--muted)}
 .datanote b{font-weight:600;color:var(--fg)}
 .bench{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
@@ -183,9 +187,10 @@ ul.why{margin:4px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:3
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">AI access panel · room plan · concept</div>
-    <h1>The panel as a room</h1>
-    <p class="lede">One micro app, laid out as a room you can turn and walk through: what it reads, what it checks, what it keeps and what it shows, plus the plug that holds a content calendar up against it.</p>
+    <div class="eyebrow">Room plan · concept</div>
+    <h1>AI Access Panel</h1>
+    <p class="lede">A concept for a micro app that tracks whether AI systems are allowed to read public posts on LinkedIn, Reddit, YouTube, X, Instagram and Facebook, then checks a content calendar against it. It isn't built yet. This page lays out how it would work, part by part, as a room you can turn and walk through.</p>
+    <p class="byline">A concept by <a href="https://martinetchegaray.com">Martin Etchegaray</a></p>
   </header>
 
   <section class="bench" aria-label="Isometric teardown">
@@ -818,7 +823,7 @@ if (typeof module !== 'undefined') { module.exports = { DEFAULT_VIEW: DEFAULT_VI
   });
   function overview() {
     var h = '<span class="layerchip">Overview</span><h3>What you\'re looking at</h3>' +
-      '<p class="ovLead">A micro app laid out as a room. It answers one question for B2B marketers: are AI systems like ChatGPT, Claude, Gemini and Perplexity allowed to read what you post on LinkedIn, Reddit, YouTube, X, Instagram and Facebook?</p>' +
+      '<p class="ovLead">AI Access Panel tracks whether AI systems like ChatGPT, Claude, Gemini and Perplexity are allowed to read public posts on six social platforms, and flags planned posts that won\'t reach them. The room on the left shows how it works: click any part to see what it does.</p>' +
       '<dl class="kvs">' +
       '<div class="kv"><dt>Upstream: how it knows</dt><dd>It reads public sources: each platform\'s robots.txt, the AI companies\' lists of their own bots, what a logged-out visitor sees, platform owners\' AI policies and deal announcements. Machines and one person turn these into a green, amber or red light for each platform and AI system, and keep the evidence behind every light.</dd></div>' +
       '<div class="kv"><dt>Downstream: what you do with it</dt><dd>Plug in your content calendar. Every post meant to show up in AI answers is checked against its platform\'s status on the day it goes out, and the report flags posts headed where AI systems can\'t reach.</dd></div>' +
